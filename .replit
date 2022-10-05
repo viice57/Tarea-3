@@ -1,4 +1,6 @@
-run = "gcc -g main.c -o Tarea3"
+compile = ["make", "-s"]
+run = "./main"
+entrypoint = "main.c"
 hidden = ["main", "main-debug", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
 
 [gitHubImport]
