@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "treemap.h"
+#include "../include/treemap.h"
 
 typedef struct TreeNode TreeNode;
 
 struct TreeNode {
-  Pair* pair;
+  Pair * pair;
   TreeNode * left;
   TreeNode * right;
   TreeNode * parent;
@@ -15,10 +15,10 @@ struct TreeNode {
 struct TreeMap {
   TreeNode * root;
   TreeNode * current;
-  int (*lower_than) (void* key1, void* key2);
+  int (*lower_than) (void * key1, void * key2);
 };
 
-int is_equal(TreeMap* tree, void* key1, void* key2){
+int is_equal(TreeMap* tree, void * key1, void * key2){
   if(tree->lower_than(key1, key2) == 0 && tree->lower_than(key2, key1) == 0) return 1;
   else return 0;
 }

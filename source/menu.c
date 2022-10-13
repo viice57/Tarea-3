@@ -19,7 +19,9 @@ void showMenu() {
   printf("\nIndique la accion deseada (solo números): ");
 }
 
-void showChoice(HashMap * mapGames, short choice) {
+void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates, short choice) {
+  int msg;
+  
   switch(choice) {
     case 0:
       printf("*********************\n");
@@ -27,31 +29,103 @@ void showChoice(HashMap * mapGames, short choice) {
   		printf("*********************\n");
       break;
 		case 1:
-      importProperties(listProperties, mapIDs, mapCities, mapTypes);
+      msg = importGames(mapGames, mapPrices, mapRatings, mapYears);
+
+      if(msg) {
+        printf("Archivo no encontrado. ");
+        exit(EXIT_FAILURE);
+      } else {
+        printf("***********************\n");
+        printf("* ¡Archivo importado! *\n");
+        printf("***********************\n");
+      }
   		break;
   	case 2:
-      addProperty(listProperties, mapIDs, mapCities, mapTypes);
+      msg = addGame(mapGames, mapPrices, mapRatings, mapYears);
+
+      if(!msg) {
+        printf("********************\n");
+        printf("* ¡Juego agregado! *\n");
+        printf("********************\n");  
+      }
   		break;
   	case 3:
-  		showByAll(mapIDs);
+  		msg = showByPrice(mapPrices);
+
+      if(msg) {
+        printf("No se ha encontrado alguna propiedad por tal precio. Pruebe otro valor.");
+      } else {
+        printf("**************************************\n");
+        printf("* ¡Se han mostrado todos los juegos! *\n");
+        printf("**************************************\n");  
+      }
   		break;
   	case 4:
-  		showByCity(mapCities);
+  		msg = showByRating(mapRatings);
+
+      if(msg) {
+        printf("No se ha encontrado algún juego con tal valoración. Pruebe otro valor.");}
+      } else {
+        printf("**************************************\n");
+        printf("* ¡Se han mostrado todos los juegos! *\n");
+        printf("**************************************\n");  
+      }
   		break;
   	case 5:
-  		showByType(mapTypes);
+  		msg = showByDate(mapDates);
+
+      if(msg) {
+        printf("No se ha encontrado algun juego con tal fecha. Pruebe otra.");
+      } else {
+        printf("**************************************\n");
+        printf("* ¡Se han mostrado todos los juegos! *\n");
+        printf("**************************************\n");  
+      }
       break;
   	case 6:
-  		showByCapacity(mapIDs);
+  		msg = searchGame(mapGames);
+
+      if(msg) {
+        printf("No se ha encontrado algun juego con tal nombre. Pruebe otro.");
+      } else {
+        printf("**************************************\n");
+        printf("* ¡Se han mostrado todos los juegos! *\n");
+        printf("**************************************\n");  
+      }
   		break;
   	case 7:
-      addFavourite(listProperties, mapIDs);
+      msg = addFavourite(mapGames);
+
+      if(msg) {
+        printf("\nFallo al añadir: El juego ya había sido marcado.\n");
+      } else {
+        printf("\n**********************\n");
+  	    printf("* ¡Favorito añadido! *\n");
+  	    printf("**********************\n");
+      }
   		break;
   	case 8:
-  		showMyFavourites(listProperties);
+  		msg = showFavourites(mapGames);
+
+      if(msg) {
+        printf("Fallo en la búsqueda: No se han encontrado favoritos.\n");
+      } else {
+        printf("\n********************************************\n");
+  	    printf("* ¡Todas los favoritos han sido mostrados! *\n");
+  	    printf("********************************************\n");
+      }
   		break;
   	case 9:
-  		exportProperties(mapIDs);
+  		msg = exportAll(mapGames);
+
+      if(msg) {
+        printf("Archivo no encontrado. ");
+        exit(EXIT_FAILURE);
+      } else {
+        printf("***********************\n");
+        printf("* ¡Archivo exportado! *\n");
+        printf("***********************\n");
+      }
   		break;
   	default:
   		printf("**************************************\n");
