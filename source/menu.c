@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "../include/games.h"
 #include "../include/menu.h"
 
@@ -29,7 +30,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   		printf("*********************\n");
       break;
 		case 1:
-      msg = importGames(mapGames, mapPrices, mapRatings, mapYears);
+      msg = importGames(mapGames, mapPrices, mapRatings, mapDates);
 
       if(msg) {
         printf("Archivo no encontrado. ");
@@ -64,7 +65,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   		msg = showByRating(mapRatings);
 
       if(msg) {
-        printf("No se ha encontrado algún juego con tal valoración. Pruebe otro valor.");}
+        printf("No se ha encontrado algún juego con tal valoración. Pruebe otro valor.");
       } else {
         printf("**************************************\n");
         printf("* ¡Se han mostrado todos los juegos! *\n");

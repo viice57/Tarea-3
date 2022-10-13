@@ -1,5 +1,4 @@
-#ifndef TREEMAP_h
-#define TREEMAP_h
+#ifndef TREEMAP_H
 
 typedef struct TreeMap TreeMap;
 

@@ -6,8 +6,7 @@
 //  Copyright © 2018 Matias Barrientos. All rights reserved.
 //
 
-#ifndef HashMap_h
-#define HashMap_h
+#ifndef HASHMAP_H
 
 typedef struct HashMap HashMap;
 

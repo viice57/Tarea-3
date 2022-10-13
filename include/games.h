@@ -1,5 +1,4 @@
 #ifndef GAME_H
-#define GAME_H
 
 #include "hashmap.h"
 #include "treemap.h"
@@ -13,11 +12,11 @@ int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
 
 int addGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
 
-int showByPrice(HashMap * mapPrices);
+int showByPrice(TreeMap * mapPrices);
 
-int showByRating(HashMap * mapRatings);
+int showByRating(TreeMap* mapRatings);
 
-int showByDate(HashMap * mapDates);
+int showByDate(TreeMap * mapDates);
 
 int addFavourite(HashMap * mapGames);
 

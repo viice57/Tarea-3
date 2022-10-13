@@ -43,7 +43,7 @@ int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   char readLine[99];
   fflush(stdin);
 
-  /* Menú para indicar el nombre, le añadimos la extensión .csv al final*/
+  /* Menú para indicar el nombre de archivo, le añadimos la extensión .csv al final*/
   printf("Indique nombre del archivo: ");
   scanf("%30s", filename);
   getchar();
@@ -58,7 +58,7 @@ int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
     return 1;
   }
 
-  /* Ciclo while para leer las líneas y asignar cada propiedad a una lista de propiedades*/
+  /* Ciclo while para leer las líneas y asignar cada propiedad a un mapa con tabla hash*/
   while(fgets(readLine, 99, file)) {
     game * newGame = createGame(readLine);
     insertMap(mapGames, newGame->name, newGame);
@@ -68,9 +68,9 @@ int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   fclose(file);
   eraseMap(mapGames, "Nombre");
 
-  /* Recorremos la lista de propiedades */
+  /* Recorremos el mapa de juegos */
   for(game * map = firstMap(mapGames); map != NULL; map = nextMap(mapGames)) {
-    /* Asignacion del elemento del mapa de juegos al árbol respectivo */   
+    /* Asignacion del elemento del mapa al árbol respectivo */   
     insertTreeMap(mapPrices, map->price, map);
     insertTreeMap(mapRatings, map->rating, map);
     insertTreeMap(mapDates, map->date, map);
@@ -130,7 +130,7 @@ int showByPrice(HashMap * mapPrices) {
   if(!searchTreeMap(mapPrices, price)) return 1;
   
   for(Pair * newSearch = firstTreeMap(mapPrices); newSearch != NULL; newSearch = nextTreeMap(mapPrices)) {
-    printf("Juego %d\n", i;
+    printf("Juego %d\n", i);
     printf("Nombre: %s\n", ((game *) newSearch->value)->name);
     printf("Fecha: %s\n", ((game *) newSearch->value)->date);
     printf("Valoración: %s\n", ((game *) newSearch->value)->rating);
@@ -160,7 +160,7 @@ int showByRating(HashMap * mapRatings) {
   if(!searchTreeMap(mapRatings, rating)) return 1;
   
   for(Pair * newSearch = firstTreeMap(mapRatings); newSearch != NULL; newSearch = nextTreeMap(mapRatings)) {
-    printf("Juego %d\n", i;
+    printf("Juego %d\n", i);
     printf("Nombre: %s\n", ((game *) newSearch->value)->name);
     printf("Fecha: %s\n", ((game *) newSearch->value)->date);
     printf("Valoración: %s\n", (char *) newSearch->key;
@@ -175,7 +175,7 @@ int showByRating(HashMap * mapRatings) {
 }
 
 /* Función que muestra todos los juegos según la fecha, incluyendo los que son agregados posteriormente */
-int showByDate(HashMap * mapDates) {
+int showByDate(TreeMap * mapDates) {
   unsigned short i = 1;
   char date[10];
   fflush(stdin);
@@ -189,7 +189,7 @@ int showByDate(HashMap * mapDates) {
   if(!searchTreeMap(mapDates, date)) return 1;
   
   for(Pair * newSearch = firstTreeMap(mapDates); newSearch != NULL; newSearch = nextTreeMap(mapDates)) {
-    printf("Juego %d\n", i;
+    printf("Juego %d\n", i);
     printf("Nombre: %s\n", ((game *) newSearch->value)->name);
     printf("Fecha: %s\n", (char *) newSearch->key;
     printf("Valoración: %s\n", ((game *) newSearch->value)->rating);
@@ -204,7 +204,7 @@ int showByDate(HashMap * mapDates) {
 }
 
 /* Función para añadir un favorito al mapa de juegos */
-int addFavourite(HashMap * mapGames) {
+int addFavourite(TreeMap * mapGames) {
   char name[20];
   fflush(stdin);
 
@@ -218,7 +218,7 @@ int addFavourite(HashMap * mapGames) {
   /* Ciclo para determinar si una propiedad será favorita o si no existen favoritos. */
   for(game * favGame = firstMap(mapGames); favGame != NULL; favGame = nextMap(mapGames)) {
     if(is_equal(favGame->name, name)) {
-      if(favGame->favourite == 0) favProperties->favourite = 1;
+      if(favGame->favourite == 0) favGame->favourite = 1;
       else return 1;
     }
   }
@@ -228,7 +228,7 @@ int addFavourite(HashMap * mapGames) {
 }
 
 /* Función que muestra los favoritos */
-int showFavourites(HashMap * mapGames) {
+int showFavourites(TreeMap * mapGames) {
   unsigned short totalFavs = 0;
 
   /* Recorremos el mapa de juegos busca de favoritos */
