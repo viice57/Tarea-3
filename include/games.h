@@ -1,14 +1,12 @@
 #ifndef GAME_H
-
-#include "hashmap.h"
-#include "treemap.h"
+#define GAME_H
 
 typedef struct game game;
 
 /* Función para separar un juego a partir del archivo .csv */
 game * createGame(char readLine[]);
 
-int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
+void importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
 
 int addGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
 

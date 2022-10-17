@@ -8,14 +8,14 @@ typedef struct HashMap HashMap;
 int enlarge_called = 0;
 
 struct HashMap {
-  Pair ** buckets;
+  HashPair ** buckets;
   long size;
   long capacity;
   long current;
 };
 
-Pair * createPair(char * key, void * value) {
-  Pair * newPair = (Pair *) malloc(sizeof(Pair));
+HashPair * createPair(char * key, void * value) {
+  HashPair * newPair = (HashPair *) malloc(sizeof(HashPair));
   
   newPair->key = key;
   newPair->value = value;
@@ -34,7 +34,7 @@ long hash(char * key, long capacity) {
   return hash%capacity;
 }
 
-int is_equal(void* key1, void* key2){
+int is_equal_hash(void* key1, void* key2){
   if(!key1|| !key2) return 0;
   if(strcmp((char*)key1,(char*)key2) == 0) return 1;
   
@@ -42,7 +42,7 @@ int is_equal(void* key1, void* key2){
 }
 
 void insertMap(HashMap * map, char * key, void * value) {
-  Pair * newPair = createPair(key, value);
+  HashPair * newPair = createPair(key, value);
 
   size_t i = hash(key, map->capacity);
 
@@ -62,13 +62,13 @@ void insertMap(HashMap * map, char * key, void * value) {
 
 void enlarge(HashMap * map) {
   enlarge_called = 1;
-  Pair ** oldBuckets = map->buckets;
+  HashPair ** oldBuckets = map->buckets;
 
   size_t capacity = map->capacity;
   size_t i;
   
   map->capacity *= 2;
-  map->buckets = (Pair **) calloc(map->capacity, sizeof(Pair *));
+  map->buckets = (HashPair **) calloc(map->capacity, sizeof(HashPair *));
   map->size = 0;
 
   for(i = 0; i < capacity; i++) {
@@ -83,7 +83,7 @@ HashMap * createMap(long capacity) {
 
   if(!newMap) return NULL;
 
-  newMap->buckets = (Pair **) calloc(capacity, sizeof(Pair *));
+  newMap->buckets = (HashPair **) calloc(capacity, sizeof(HashPair *));
   newMap->size = 0;
   newMap->capacity = capacity;
   newMap->current = -1;
@@ -92,7 +92,7 @@ HashMap * createMap(long capacity) {
 }
 
 void eraseMap(HashMap * map,  char * key) {
-  Pair * eliminatePair = searchMap(map, key);
+  HashPair * eliminatePair = searchMap(map, key);
 
   if(eliminatePair) {
     eliminatePair->key = NULL;
@@ -100,14 +100,14 @@ void eraseMap(HashMap * map,  char * key) {
   }
 }
 
-Pair * searchMap(HashMap * map,  char * key) { 
+HashPair * searchMap(HashMap * map,  char * key) { 
   size_t i = hash(key, map->capacity);
   size_t cont = 0;
 
   while(1) {
     if(!map->buckets[i] || !map->buckets[i]->key) break;
 
-    if(is_equal(key, map->buckets[i]->key)) {
+    if(is_equal_hash(key, map->buckets[i]->key)) {
       map->current = i;
       return map->buckets[i];
     }
@@ -122,7 +122,7 @@ Pair * searchMap(HashMap * map,  char * key) {
   return NULL;
 }
 
-Pair * firstMap(HashMap * map) {
+HashPair * firstMap(HashMap * map) {
   size_t i;
 
   if(!map->size) return NULL;
@@ -137,7 +137,7 @@ Pair * firstMap(HashMap * map) {
   return NULL;
 }
 
-Pair * nextMap(HashMap * map) {
+HashPair * nextMap(HashMap * map) {
   size_t i;
   
   if(!map->size) return NULL;

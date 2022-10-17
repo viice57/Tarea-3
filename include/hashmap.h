@@ -7,27 +7,28 @@
 //
 
 #ifndef HASHMAP_H
+#define HASHMAP_H
 
 typedef struct HashMap HashMap;
 
-typedef struct Pair {
+typedef struct HashPair {
      char * key;
      void * value;
-} Pair;
+} HashPair;
 
 HashMap * createMap(long capacity);
 
-int is_equal(void* key1, void* key2);
+int is_equal_hash(void* key1, void* key2);
 
 void insertMap(HashMap * table, char * key, void * value);
 
 void eraseMap(HashMap * table, char * key);
 
-Pair * searchMap(HashMap * table, char * key);
+HashPair * searchMap(HashMap * table, char * key);
 
-Pair * firstMap(HashMap * table);
+HashPair * firstMap(HashMap * table);
 
-Pair * nextMap(HashMap * table);
+HashPair * nextMap(HashMap * table);
 
 void enlarge(HashMap * map);
 

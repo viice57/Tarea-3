@@ -1,7 +1,5 @@
 #ifndef MENU_H
-
-#include "hashmap.h"
-#include "treemap.h"
+#define MENU_H
 
 void showMenu();
 

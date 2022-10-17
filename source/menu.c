@@ -30,8 +30,8 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   		printf("*********************\n");
       break;
 		case 1:
-      msg = importGames(mapGames, mapPrices, mapRatings, mapDates);
-
+      importGames(mapGames, mapPrices, mapRatings, mapDates);
+      msg = 0;
       if(msg) {
         printf("Archivo no encontrado. ");
         exit(EXIT_FAILURE);
@@ -42,7 +42,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
       }
   		break;
   	case 2:
-      msg = addGame(mapGames, mapPrices, mapRatings, mapYears);
+      msg = addGame(mapGames, mapPrices, mapRatings, mapDates);
 
       if(!msg) {
         printf("********************\n");
@@ -84,7 +84,8 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
       }
       break;
   	case 6:
-  		msg = searchGame(mapGames);
+  		//msg = searchGame(mapGames);
+      msg = 0;
 
       if(msg) {
         printf("No se ha encontrado algun juego con tal nombre. Pruebe otro.");
