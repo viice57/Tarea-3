@@ -4,12 +4,15 @@
 
 #include "../include/games.h"
 
+#define FILENAME_LENGTH 30
+#define LINE_LENGTH 99
+
 /* Estructura para asignar juegos a mapas */
 struct game {
   char name[40];
-  char date[10];
-  char rating[2];
-  char price[10];
+  char date[20];
+  char rating[10];
+  char price[15];
   unsigned short favourite;
 };
 
@@ -20,16 +23,16 @@ game * createGame(char readLine[]) {
 
   /* Escaneamos los siguientes datos del juego: nombre, fecha, valoración y precio. También, por defecto no es favorito */
   split = strtok(readLine, ",");
-  strncpy(newGame->name, split, 40);
+  strncpy(newGame->name, split, sizeof(newGame->name));
 
   split = strtok(NULL, ",");
-  strncpy(newGame->date, split, 10);
+  strncpy(newGame->date, split, sizeof(newGame->date));
   
   split = strtok(NULL, ",");
-  strncpy(newGame->rating, split, 2);
+  strncpy(newGame->rating, split, sizeof(newGame->rating));
 
   split = strtok(NULL, "\n");
-  strncpy(newGame->price, split, 10);
+  strncpy(newGame->price, split, sizeof(newGame->price));
 
   newGame->favourite = 0;
 
@@ -40,8 +43,8 @@ game * createGame(char readLine[]) {
 /* Función para importar el archivo .csv y asignar a los mapas respectivos. */
 int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates) {
   /* Variables para guardar nombre de archivo y líneas a leer */
-  char filename[30];
-  char readLine[99];
+  char filename[FILENAME_LENGTH];
+  char readLine[LINE_LENGTH];
   fflush(stdin);
 
   /* Menú para indicar el nombre de archivo, le añadimos la extensión .csv al final*/
@@ -57,13 +60,13 @@ int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   if(!file) return 1;
 
   /* Ciclo para leer las líneas y asignar cada propiedad a un mapa con tabla hash */
-  while(fgets(readLine, 99, file)) {
+  while(fgets(readLine, LINE_LENGTH, file)) {
     game * newGame = createGame(readLine);
     insertMap(mapGames, newGame->name, newGame);
   }
 
   /* Cerramos el archivo y eliminamos primera línea */
-  fclose(file);
+  //fclose(file);
   eraseMap(mapGames, "Nombre");
 
   /* Recorremos el mapa de juegos */
@@ -84,36 +87,35 @@ int addGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeM
   fflush(stdin);
 
   /* Menú para el ingreso de datos del juego. */
-
   printf("Ingrese nombre del juego: ");
-  fgets(newGame->name, 40, stdin);
-  newGame->name[strcspn(newGame->name, "\n")] = 0;
+  fgets(newGame->name, sizeof(newGame->name), stdin);
   getchar();
+  newGame->name[strcspn(newGame->name, "\n")] = 0;
 
   printf("Ingrese fecha del juego (formato DD/MM/AAAA): ");
-  fgets(newGame->date, 10, stdin);
-  newGame->date[strcspn(newGame->date, "\n")] = 0;
+  fgets(newGame->date, sizeof(newGame->date), stdin);
   getchar();
+  newGame->date[strcspn(newGame->date, "\n")] = 0;
 
   printf("Ingrese valoración del juego: ");
-  fgets(newGame->rating, 2, stdin);
-  newGame->rating[strcspn(newGame->rating, "\n")] = 0;
+  fgets(newGame->rating, sizeof(newGame->rating), stdin);
   getchar();
+  newGame->rating[strcspn(newGame->rating, "\n")] = 0;
 
   printf("Ingrese precio del juego: ");
-  fgets(newGame->price, 10, stdin);
-  newGame->price[strcspn(newGame->price, "\n")] = 0;
+  fgets(newGame->price, sizeof(newGame->price), stdin);
   getchar();
+  newGame->price[strcspn(newGame->price, "\n")] = 0;
 
   newGame->favourite = 0;
 
   /* Asignación a mapas */
   insertMap(mapGames, newGame->name, newGame);
-  insertTreeMap(mapPrices, newGame->price, newGame);
-  insertTreeMap(mapRatings, newGame->rating, newGame);
-  insertTreeMap(mapDates, newGame->date, newGame);
+  //insertTreeMap(mapPrices, newGame->price, newGame);
+  //insertTreeMap(mapRatings, newGame->rating, newGame);
+  //insertTreeMap(mapDates, newGame->date, newGame);
 
-  /* Se añadió una nueva propiedad */
+  /* Mensaje de éxito */
   return 0;
 }
 
@@ -123,10 +125,19 @@ int showByPrice(TreeMap * mapPrices) {
   char sType[11];
   fflush(stdin);
 
-  /* Escaneo del precio */
+  /* Escaneo del tipo de búsqueda */
   printf("Ingrese tipo de búsqueda de precios (creciente/decreciente): ");
   scanf("%11s", sType);
   getchar();
+
+  /*switch(sType) {
+    case "creciente":
+      break;
+    case "decreciente":
+      break;
+    default:
+      break;
+  } */
   
   /* Si no existe algún juego con ese precio, muestra mensaje y termina el programa. */
   if(!firstTreeMap(mapPrices)) return 1;
