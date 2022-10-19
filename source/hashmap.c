@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
 #include "../include/hashmap.h"
 
 typedef struct HashMap HashMap;
@@ -28,7 +29,7 @@ long hash(char * key, long capacity) {
   char * ptr;
   
   for(ptr = key; *ptr != '\0'; ptr++) {
-    hash += hash*32 + tolower(*ptr);
+    hash += hash * 32 + tolower(*ptr);
   }
   
   return hash%capacity;

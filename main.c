@@ -16,7 +16,7 @@ int lower_than_string(void * key1, void * key2){
 int main(void) {
   short choice = -1; 
 
-  HashMap * mapGames = createMap(50);
+  HashMap * mapGames = createMap(100);
   
   TreeMap * mapPrices = createTreeMap(lower_than_string);
   TreeMap * mapRatings = createTreeMap(lower_than_string);
@@ -29,10 +29,10 @@ int main(void) {
 		scanf("%hi", &choice);
 		printf("\n");
 
-		/*if(choice > 1 && !firstMap(mapGames)) {
-      printf("No se ha abierto archivo alguno. Cerrando");
+		if(choice > 1 && !firstMap(mapGames)) {
+      printf("No se ha abierto archivo alguno. Cerrando.");
       break;
-    }*/
+    }
     
 		showChoice(mapGames, mapPrices, mapRatings, mapDates, choice);
 	} while(choice != 0);

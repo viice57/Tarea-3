@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "../include/games.h"
 #include "../include/menu.h"
 
@@ -22,7 +23,7 @@ void showMenu() {
 
 void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates, short choice) {
   int msg;
-  
+
   switch(choice) {
     case 0:
       printf("*********************\n");
@@ -30,8 +31,8 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   		printf("*********************\n");
       break;
 		case 1:
-      importGames(mapGames, mapPrices, mapRatings, mapDates);
-      msg = 0;
+      msg = importGames(mapGames, mapPrices, mapRatings, mapDates);
+
       if(msg) {
         printf("Archivo no encontrado. ");
         exit(EXIT_FAILURE);
@@ -99,9 +100,9 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
       msg = addFavourite(mapGames);
 
       if(msg) {
-        printf("\nFallo al añadir: El juego ya había sido marcado.\n");
+        printf("Fallo al añadir: El juego ya había sido marcado.\n");
       } else {
-        printf("\n**********************\n");
+        printf("**********************\n");
   	    printf("* ¡Favorito añadido! *\n");
   	    printf("**********************\n");
       }
@@ -112,7 +113,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
       if(msg) {
         printf("Fallo en la búsqueda: No se han encontrado favoritos.\n");
       } else {
-        printf("\n********************************************\n");
+        printf("********************************************\n");
   	    printf("* ¡Todas los favoritos han sido mostrados! *\n");
   	    printf("********************************************\n");
       }

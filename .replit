@@ -1,2 +1,2 @@
-compile = ["gcc", "-Isource/", "-g", "main.c", "-o", "Tarea3"]
+compile = ["gcc", "-w", "-Isource/", "-g", "main.c", "-o", "Tarea3"]
 run = "./Tarea3"

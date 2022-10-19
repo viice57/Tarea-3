@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "../include/games.h"
 
 /* Estructura para asignar juegos a mapas */
 struct game {
-  char name[20];
+  char name[40];
   char date[10];
   char rating[2];
   char price[10];
@@ -19,16 +20,16 @@ game * createGame(char readLine[]) {
 
   /* Escaneamos los siguientes datos del juego: nombre, fecha, valoración y precio. También, por defecto no es favorito */
   split = strtok(readLine, ",");
-  strcpy(newGame->name, split);
+  strncpy(newGame->name, split, 40);
 
   split = strtok(NULL, ",");
-  strcpy(newGame->date, split);
+  strncpy(newGame->date, split, 10);
   
   split = strtok(NULL, ",");
-  strcpy(newGame->rating, split);
+  strncpy(newGame->rating, split, 2);
 
   split = strtok(NULL, "\n");
-  strcpy(newGame->price, split);
+  strncpy(newGame->price, split, 10);
 
   newGame->favourite = 0;
 
@@ -36,8 +37,8 @@ game * createGame(char readLine[]) {
   return newGame;
 }
 
-/* Función para importar el archivo .csv, asignar a una lista y a los mapas respectivos. */
-void importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates) {
+/* Función para importar el archivo .csv y asignar a los mapas respectivos. */
+int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates) {
   /* Variables para guardar nombre de archivo y líneas a leer */
   char filename[30];
   char readLine[99];
@@ -53,31 +54,27 @@ void importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, 
   FILE * file = fopen(filename, "r");
 
   /* Si el archivo no existe, simplemente se termina el programa */
-  if(!file) {
-    //fclose(file);
-    //return 1;
-  }
+  if(!file) return 1;
 
-  /* Ciclo while para leer las líneas y asignar cada propiedad a un mapa con tabla hash */
+  /* Ciclo para leer las líneas y asignar cada propiedad a un mapa con tabla hash */
   while(fgets(readLine, 99, file)) {
     game * newGame = createGame(readLine);
     insertMap(mapGames, newGame->name, newGame);
-    printf("1");
   }
 
   /* Cerramos el archivo y eliminamos primera línea */
-  //fclose(file);
-  //eraseMap(mapGames, "Nombre");
+  fclose(file);
+  eraseMap(mapGames, "Nombre");
 
   /* Recorremos el mapa de juegos */
-  /*for(game * map = firstMap(mapGames); map != NULL; map = nextMap(mapGames)) {
-    /* Asignacion del elemento del mapa al árbol respectivo 
-    insertTreeMap(mapPrices, map->price, map);
-    insertTreeMap(mapRatings, map->rating, map);
-    insertTreeMap(mapDates, map->date, map);
-  }*/
+  for(game * map = firstMap(mapGames); map != NULL; map = nextMap(mapGames)) {
+    /* Asignacion del elemento del mapa al árbol respectivo */
+    //insertTreeMap(mapPrices, map->price, map);
+    //insertTreeMap(mapRatings, map->rating, map);
+    //insertTreeMap(mapDates, map->date, map);
+  }
 
-  //return 0;
+  return 0;
 }
 
 /* Función para añadir una nueva propiedad a los mapas */
@@ -89,19 +86,23 @@ int addGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeM
   /* Menú para el ingreso de datos del juego. */
 
   printf("Ingrese nombre del juego: ");
-  fgets(newGame->name, 20, stdin);
+  fgets(newGame->name, 40, stdin);
   newGame->name[strcspn(newGame->name, "\n")] = 0;
+  getchar();
 
   printf("Ingrese fecha del juego (formato DD/MM/AAAA): ");
-  scanf("%10s", newGame->date);
+  fgets(newGame->date, 10, stdin);
+  newGame->date[strcspn(newGame->date, "\n")] = 0;
   getchar();
 
   printf("Ingrese valoración del juego: ");
-  scanf("%3s", newGame->rating);
+  fgets(newGame->rating, 2, stdin);
+  newGame->rating[strcspn(newGame->rating, "\n")] = 0;
   getchar();
 
   printf("Ingrese precio del juego: ");
-  scanf("%10s", newGame->price);
+  fgets(newGame->price, 10, stdin);
+  newGame->price[strcspn(newGame->price, "\n")] = 0;
   getchar();
 
   newGame->favourite = 0;
@@ -259,10 +260,7 @@ int exportAll(HashMap * mapGames) {
   FILE * file = fopen(filename, "r");
   
   /* Si el archivo no existe, simplemente se termina el programa */
-  if(!file) {
-    fclose(file);
-    return 1;
-  }
+  if(!file) return 1;
 
   /* Eliminamos el contenido actual del archivo */
   remove(filename);

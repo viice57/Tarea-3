@@ -3,10 +3,9 @@
 
 typedef struct game game;
 
-/* Función para separar un juego a partir del archivo .csv */
 game * createGame(char readLine[]);
 
-void importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
+int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
 
 int addGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
 
