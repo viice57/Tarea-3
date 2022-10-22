@@ -11,7 +11,7 @@
 struct game {
   char name[40];
   char date[20];
-  char rating[10];
+  char rating[15];
   char price[15];
   unsigned short favourite;
 };
@@ -42,13 +42,13 @@ game * createGame(char readLine[]) {
 
 /* Función para importar el archivo .csv y asignar a los mapas respectivos. */
 int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates) {
-  /* Variables para guardar nombre de archivo y líneas a leer */
+  /* Variables para guardar nombre de archivo y línea a leer */
   char filename[FILENAME_LENGTH];
   char readLine[LINE_LENGTH];
   fflush(stdin);
 
   /* Menú para indicar el nombre de archivo, le añadimos la extensión .csv al final*/
-  printf("Indique nombre del archivo: ");
+  printf("\nIndique nombre del archivo: ");
   scanf("%30s", filename);
   getchar();
   strcat(filename, ".csv");
@@ -56,8 +56,11 @@ int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   /* Abrimos el archivo en modo lectura */
   FILE * file = fopen(filename, "r");
 
-  /* Si el archivo no existe, simplemente se termina el programa */
+  /* Si el archivo no existe, simplemente se termina y retorna error */
   if(!file) return 1;
+
+  /* Eliminamos primera línea */
+  fgets(readLine, LINE_LENGTH, file);
 
   /* Ciclo para leer las líneas y asignar cada propiedad a un mapa con tabla hash */
   while(fgets(readLine, LINE_LENGTH, file)) {
@@ -65,55 +68,73 @@ int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
     insertMap(mapGames, newGame->name, newGame);
   }
 
-  /* Cerramos el archivo y eliminamos primera línea */
-  //fclose(file);
-  eraseMap(mapGames, "Nombre");
-
   /* Recorremos el mapa de juegos */
-  for(game * map = firstMap(mapGames); map != NULL; map = nextMap(mapGames)) {
-    /* Asignacion del elemento del mapa al árbol respectivo */
-    //insertTreeMap(mapPrices, map->price, map);
-    //insertTreeMap(mapRatings, map->rating, map);
-    //insertTreeMap(mapDates, map->date, map);
+  for(HashPair * map = firstMap(mapGames); map != NULL; map = nextMap(mapGames)) {
+    /*
+    game * gameFromHash = (game *) map->value;
+
+    //argumentos: mapa, criterio
+    insertListOnTree(mapPrices, gameFromHash->price);
+    insertListOnTree(mapRatings, gameFromHash->rating);
+    insertListOnTree(mapDates, gameFromHash->date);
+    */
+    /* Inserción en árbol de precios */
+    game * gameFromHash = (game *) map->value;
+    TreePair * searchTree = searchTreeMap(mapPrices, gameFromHash->price);
+
+    /* Si el key buscado existe, si no */
+    if(searchTree) {
+      /* Obtención de la lista desde el árbol. Insertamos un nuevo juego a la lista*/
+      List * listAux = (List *) searchTree->value;
+      pushBack(listAux, gameFromHash);
+    } else {
+      /* Asignación del juego a la lista, y posteriormente insertar la lista en el árbol */
+      List * newList = createList();
+      pushBack(newList, gameFromHash);
+      insertTreeMap(mapPrices, gameFromHash->price, newList);
+    }
   }
 
+  /* Cerramos el archivo y mensaje de éxito */
+  fclose(file);
   return 0;
 }
 
 /* Función para añadir una nueva propiedad a los mapas */
 int addGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates)  {
   /* Nueva asignación de propiedad */
+  char temp;
   game * newGame = (game *) malloc(sizeof(game));
   fflush(stdin);
 
   /* Menú para el ingreso de datos del juego. */
-  printf("Ingrese nombre del juego: ");
+  printf("\nIngrese nombre del juego: ");
+  scanf("%c", &temp);
   fgets(newGame->name, sizeof(newGame->name), stdin);
-  getchar();
   newGame->name[strcspn(newGame->name, "\n")] = 0;
 
   printf("Ingrese fecha del juego (formato DD/MM/AAAA): ");
+  scanf("%c", &temp);
   fgets(newGame->date, sizeof(newGame->date), stdin);
-  getchar();
   newGame->date[strcspn(newGame->date, "\n")] = 0;
 
   printf("Ingrese valoración del juego: ");
+  scanf("%c", &temp);
   fgets(newGame->rating, sizeof(newGame->rating), stdin);
-  getchar();
   newGame->rating[strcspn(newGame->rating, "\n")] = 0;
 
   printf("Ingrese precio del juego: ");
+  scanf("%c", &temp);
   fgets(newGame->price, sizeof(newGame->price), stdin);
-  getchar();
   newGame->price[strcspn(newGame->price, "\n")] = 0;
 
   newGame->favourite = 0;
 
   /* Asignación a mapas */
   insertMap(mapGames, newGame->name, newGame);
-  //insertTreeMap(mapPrices, newGame->price, newGame);
-  //insertTreeMap(mapRatings, newGame->rating, newGame);
-  //insertTreeMap(mapDates, newGame->date, newGame);
+  //insertListOnTree(mapPrices, newGame->price);
+  //insertListOnTree(mapRatings, newGame->rating);
+  //insertListOnTree(mapDates, newGame->date);
 
   /* Mensaje de éxito */
   return 0;
@@ -126,7 +147,7 @@ int showByPrice(TreeMap * mapPrices) {
   fflush(stdin);
 
   /* Escaneo del tipo de búsqueda */
-  printf("Ingrese tipo de búsqueda de precios (creciente/decreciente): ");
+  printf("\nIngrese tipo de búsqueda de precios (creciente/decreciente): ");
   scanf("%11s", sType);
   getchar();
 
@@ -143,13 +164,16 @@ int showByPrice(TreeMap * mapPrices) {
   if(!firstTreeMap(mapPrices)) return 1;
   
   for(TreePair * newSearch = firstTreeMap(mapPrices); newSearch != NULL; newSearch = nextTreeMap(mapPrices)) {
-    printf("Juego %d\n", i);
-    printf("Nombre: %s\n", ((game *) newSearch->value)->name);
-    printf("Fecha: %s\n", ((game *) newSearch->value)->date);
-    printf("Valoración: %s\n", ((game *) newSearch->value)->rating);
-    printf("Precio: $ %s\n", (char *) newSearch->key);
-    printf("\n");
-    i++;
+    for(game * juego = (game *) firstList((List *) newSearch->value); juego != NULL; juego = (game *) nextList((List *) newSearch->value)) {
+      printf("Juego %d\n", i);
+      printf("Nombre: %s\n", juego->name);
+      printf("Fecha: %s\n", juego->date);
+      printf("Valoración: %s\n", juego->rating);
+      printf("Precio: $ %s\n", juego->price);
+      printf("\n");
+      
+      i++;
+    }
   }
 
   /* Se mostraron todos los juegos */
@@ -170,7 +194,7 @@ int showByRating(TreeMap * mapRatings) {
   getchar();
   
   for(TreePair * newSearch = firstTreeMap(mapRatings); newSearch != NULL; newSearch = nextTreeMap(mapRatings)) {
-    if((char *) newSearch->key > rating) {
+    if(rating > (char *) newSearch->key) {
       printf("Juego %d\n", i);
       printf("Nombre: %s\n", ((game *) newSearch->value)->name);
       printf("Fecha: %s\n", ((game *) newSearch->value)->date);
@@ -193,7 +217,7 @@ int showByDate(TreeMap * mapDates) {
   fflush(stdin);
 
   /* Escaneo de la fecha */
-  printf("Ingrese fecha a buscar (formato DD/MM/AAAA): ");
+  printf("Ingrese año a buscar: ");
   scanf("%10s", date);
   getchar();
 
@@ -217,20 +241,22 @@ int showByDate(TreeMap * mapDates) {
 
 /* Función para añadir un favorito al mapa de juegos */
 int addFavourite(HashMap * mapGames) {
-  char name[20];
+  char name[40];
+  char temp;
   fflush(stdin);
 
   /* Entramos y preguntamos si existe el juego dentro del mapa */
   do {
-    printf("Ingrese nombre del nuevo favorito: ");
-    scanf("%20s", name);
-    getchar();
+    printf("\nIngrese nombre del nuevo favorito: ");
+    scanf("%c", &temp);
+    fgets(name, sizeof(name), stdin);
+    name[strcspn(name, "\n")] = 0;
   } while(!searchMap(mapGames, name));
 
   /* Ciclo para determinar si una propiedad será favorita o si no existen favoritos. */
-  for(game * favGame = (game *) firstMap(mapGames); favGame != NULL; favGame = (game *) nextMap(mapGames)) {
-    if(is_equal_hash(favGame->name, name)) {
-      if(favGame->favourite == 0) favGame->favourite = 1;
+  for(HashPair * favGame = firstMap(mapGames); favGame != NULL; favGame = nextMap(mapGames)) {
+    if(is_equal_hash(((game *) favGame->value)->name, name)) {
+      if(((game *) favGame->value)->favourite == 0) ((game *) favGame->value)->favourite = 1;
       else return 1;
     }
   }
@@ -244,9 +270,9 @@ int showFavourites(HashMap * mapGames) {
   unsigned short totalFavs = 0;
 
   /* Recorremos el mapa de juegos busca de favoritos */
-  for(game * favGame = (game *) firstMap(mapGames); favGame != NULL; favGame = (game *) nextMap(mapGames)) {
-    if(favGame->favourite == 1) {
-      printf("%s\n", favGame->name);
+  for(HashPair * favGame = firstMap(mapGames); favGame != NULL; favGame = nextMap(mapGames)) {
+    if(((game *) favGame->value)->favourite == 1) {
+      printf("• %s\n", favGame->key);
       totalFavs++;
     }
   }
@@ -267,17 +293,14 @@ int exportAll(HashMap * mapGames) {
   getchar();
   strcat(filename, ".csv");
 
-  /* Abrimos el archivo en modo lectura */
-  FILE * file = fopen(filename, "r");
+  /* Abrimos el archivo en modo lectura y escritura */
+  FILE * file = fopen(filename, "r+");
   
   /* Si el archivo no existe, simplemente se termina el programa */
   if(!file) return 1;
 
   /* Eliminamos el contenido actual del archivo */
   remove(filename);
-
-  /* Abrimos el archivo en modo escritura */
-  file = fopen(filename, "w");
 
   /* Escribimos la primera línea */
   fprintf(file, "%s", "Nombre,año de salida,valoracion,precio\n");

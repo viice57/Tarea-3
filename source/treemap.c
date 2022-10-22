@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "../include/treemap.h"
 
 typedef struct TreeNode TreeNode;
@@ -45,29 +46,33 @@ TreeMap * createTreeMap(int (*lower_than) (void * key1, void * key2)) {
 }
 
 void insertTreeMap(TreeMap * tree, void * key, void * value) {
-  tree->current = tree->root;
+  if(!tree->root) {
+    tree->root = createTreeNode(key, value);
+  } else if(!searchTreeMap(tree, key)) {
+    tree->current = tree->root;
 
-  while(tree->current) {
-    if(is_equal_tree(tree, key, tree->current->pair->key)) return;
-    else {
-      if(tree->lower_than(tree->current->pair->key, key)) {
-        if(!tree->current->right) break;
-        tree->current = tree->current->right;
-      } else {
-        if(!tree->current->left) break;
-        tree->current = tree->current->left;
+    while(tree->current) {
+      if(is_equal_tree(tree, key, tree->current->pair->key)) return;
+      else {
+        if(tree->lower_than(tree->current->pair->key, key)) {
+          if(!tree->current->right) break;
+          tree->current = tree->current->right;
+        } else {
+          if(!tree->current->left) break;
+          tree->current = tree->current->left;
+        }
       }
     }
-  }
   
-  if(tree->lower_than(tree->current->pair->key, key)) {
-    tree->current->right = createTreeNode(key, value);
-    tree->current->right->parent = tree->current;
-    tree->current = tree->current->right;
-  } else {
-    tree->current->left = createTreeNode(key, value);
-    tree->current->left->parent = tree->current;
-    tree->current = tree->current->left;
+    if(tree->lower_than(tree->current->pair->key, key)) {
+      tree->current->right = createTreeNode(key, value);
+      tree->current->right->parent = tree->current;
+      tree->current = tree->current->right;
+    } else {
+      tree->current->left = createTreeNode(key, value);
+      tree->current->left->parent = tree->current;
+      tree->current = tree->current->left;
+    }
   }
 }
 
