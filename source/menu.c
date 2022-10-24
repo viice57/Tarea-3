@@ -16,7 +16,7 @@ void showMenu() {
   printf("(3) Mostrar juegos por precio\n");
   printf("(4) Mostrar juegos por valoración\n");
   printf("(5) Mostrar juegos por año\n");
-  printf("(6) Buscar juego\n");
+  printf("(6) Borrar juego\n");
   printf("(7) Agregar juego a favoritos\n");
   printf("(8) Mostrar mis favoritos\n");
   printf("(9) Exportar datos\n");
@@ -38,8 +38,8 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
       msg = importGames(mapGames, mapPrices, mapRatings, mapDates);
 
       if(msg) {
-        printf(RED "\nArchivo no encontrado. " RESET);
-        exit(EXIT_FAILURE);
+        printf(RED "\nEl archivo no fue encontrado o ya se había importado. " RESET);
+        //exit(EXIT_FAILURE);
       } else {
         printf(GREEN "\n***********************\n");
         printf("* ¡Archivo importado! *\n");
@@ -49,7 +49,9 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   	case 2:
       msg = addGame(mapGames, mapPrices, mapRatings, mapDates);
 
-      if(!msg) {
+      if(msg) {
+        printf(RED "\nFallo al añadir: Ya hay un juego con ese nombre." RESET);
+      } else {
         printf(GREEN "\n********************\n");
         printf("* ¡Juego agregado! *\n");
         printf("********************\n" RESET);  
@@ -59,7 +61,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   		msg = showByPrice(mapPrices);
 
       if(msg) {
-        printf(RED "\nNo se ha encontrado alguna propiedad por tal precio. Pruebe otro valor." RESET);
+        printf(RED "\nNo se han encontrado juegos." RESET);
       } else {
         printf(GREEN "\n**************************************\n");
         printf("* ¡Se han mostrado todos los juegos! *\n");
@@ -70,7 +72,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   		msg = showByRating(mapRatings);
 
       if(msg) {
-        printf(RED "\nNo se ha encontrado algún juego con tal valoración. Pruebe otro valor." RESET);
+        printf(RED "\nNo se ha encontrado algún juego mayor a tal valoración. Pruebe otro valor que sea menor." RESET);
       } else {
         printf(GREEN "\n**************************************\n");
         printf("* ¡Se han mostrado todos los juegos! *\n");
@@ -81,7 +83,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
   		msg = showByDate(mapDates);
 
       if(msg) {
-        printf(RED "\nNo se ha encontrado algun juego con tal fecha. Pruebe otra." RESET);
+        printf(RED "\nNo se han encontrado juegos." RESET);
       } else {
         printf(GREEN "\n**************************************\n");
         printf("* ¡Se han mostrado todos los juegos! *\n");
@@ -89,22 +91,22 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
       }
       break;
   	case 6:
-  		//msg = searchGame(mapGames);
+  		//msg = deleteGame(mapGames, mapPrices, mapRatings, mapDates);
       msg = 1;
 
       if(msg) {
-        printf(RED "\nNo se ha encontrado algun juego con tal nombre. Pruebe otro." RESET);
+        printf(RED "\nNo se ha encontrado algún juego con ese nombre." RESET);
       } else {
-        printf(GREEN "\n**************************************\n");
-        printf("* ¡Se han mostrado todos los juegos! *\n");
-        printf("**************************************\n" RESET);  
+        printf(GREEN "\n****************************\n");
+        printf("* ¡Se ha borrado el juego! *\n");
+        printf("****************************\n" RESET);  
       }
   		break;
   	case 7:
       msg = addFavourite(mapGames);
 
       if(msg) {
-        printf(RED "\nFallo al añadir: El juego ya había sido marcado.\n" RESET);
+        printf(RED "\nFallo al añadir: El juego ya había sido marcado o no existe.\n" RESET);
       } else {
         printf(GREEN "\n**********************\n");
   	    printf("* ¡Favorito añadido! *\n");
@@ -127,7 +129,7 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
 
       if(msg) {
         printf(RED "\nArchivo no encontrado. " RESET);
-        exit(EXIT_FAILURE);
+        //exit(EXIT_FAILURE);
       } else {
         printf(GREEN "\n***********************\n");
         printf("* ¡Archivo exportado! *\n");

@@ -19,15 +19,23 @@ struct TreeMap {
   int (*lower_than) (void * key1, void * key2);
 };
 
-int is_equal_tree(TreeMap* tree, void * key1, void * key2){
+int is_equal_tree(TreeMap * tree, void * key1, void * key2){
   if(tree->lower_than(key1, key2) == 0 && tree->lower_than(key2, key1) == 0) return 1;
   else return 0;
+}
+
+TreeNode * minimum(TreeNode * x){
+  if(!x) return NULL;
+    
+  while(x->left) x = x->left;
+  return x;
 }
 
 
 TreeNode * createTreeNode(void * key, void * value) {
   TreeNode * new = (TreeNode *) malloc(sizeof(TreeNode));
-  if (!new) return NULL;
+  if(!new) return NULL;
+  
   new->pair = (TreePair *) malloc(sizeof(TreePair));
   new->pair->key = key;
   new->pair->value = value;
@@ -37,158 +45,152 @@ TreeNode * createTreeNode(void * key, void * value) {
 }
 
 TreeMap * createTreeMap(int (*lower_than) (void * key1, void * key2)) {
+    
   TreeMap * new = (TreeMap *) malloc(sizeof(TreeMap));
-  new->root = NULL;
-  new->current = NULL;
+  if(!new) return NULL;
+  
+  new->root = new->current = NULL;
   new->lower_than = lower_than;
   
   return new;
 }
 
-void insertTreeMap(TreeMap * tree, void * key, void * value) {
-  if(!tree->root) {
-    tree->root = createTreeNode(key, value);
-  } else if(!searchTreeMap(tree, key)) {
-    tree->current = tree->root;
-
-    while(tree->current) {
-      if(is_equal_tree(tree, key, tree->current->pair->key)) return;
-      else {
-        if(tree->lower_than(tree->current->pair->key, key)) {
-          if(!tree->current->right) break;
-          tree->current = tree->current->right;
-        } else {
-          if(!tree->current->left) break;
-          tree->current = tree->current->left;
-        }
-      }
-    }
+void insertTreeMap(TreeMap * tree, void* key, void * value) {
+  if(!tree) return;
+    
+  TreeNode * aux = tree->root;
+  TreeNode * parent = NULL;
+    
+  while (aux) {
+    parent = aux;
+        
+    if(tree->lower_than(key, aux->pair->key)) aux = aux->left;
+    else if(tree->lower_than(aux->pair->key, key)) aux = aux->right;
+    else return;
+  }
+    
+  TreeNode * new = createTreeNode(key, value);
+  new->parent = parent;
+    
+  if(!parent) tree->root = new;
+  else if(tree->lower_than(key, parent->pair->key)) parent->left = new;
+  else parent->right = new;
   
-    if(tree->lower_than(tree->current->pair->key, key)) {
-      tree->current->right = createTreeNode(key, value);
-      tree->current->right->parent = tree->current;
-      tree->current = tree->current->right;
-    } else {
-      tree->current->left = createTreeNode(key, value);
-      tree->current->left->parent = tree->current;
-      tree->current = tree->current->left;
-    }
-  }
+  tree->current = new;
 }
 
-TreeNode * minimum(TreeNode * x) {
-  while(x->left) x = x->left;
-  return x;
-}
-
-void removeNode(TreeMap * tree, TreeNode * node) {
-  TreeNode *parentNode = node->parent;
-
-  if(!node->left  && !node->right) {
-    if(tree->lower_than(parentNode->pair->key, node->pair->key)) {
-      parentNode->right = NULL; 
-    } else if(tree->lower_than(node->pair->key, parentNode->pair->key)) {
-      parentNode->left = NULL; 
-    }
-  } else if((node->left && !node->right) || (!node->left && node->right)) {
-    if(!node->left) {
-      if(tree->lower_than(parentNode->pair->key, node->pair->key)) {
-        parentNode->right = node->right; 
-      } else if(tree->lower_than(node->pair->key, parentNode->pair->key)) {
-        parentNode->left = node->right; 
-      }
-      
-      node->right->parent = parentNode; 
-    }
+void removeNode(TreeMap * tree, TreeNode* node) {
+  //nodo hoja
+  if(!node->right && !node->left) {
+    TreeNode * parent = node->parent;
+    if(!parent == NULL) tree->root = NULL;
+    else if(parent->left == node) parent->left = NULL;
+    else if(parent->right == node) parent->right = NULL;
+  } else if(node->right && node->left) { //2 hijos
+    TreeNode * aux = node->right;
+    aux  = minimum(aux);
     
-    if(!node->right) {
-      if(tree->lower_than(parentNode->pair->key, node->pair->key)) {
-        parentNode->right = node->left; 
-      } else if(tree->lower_than(node->pair->key, parentNode->pair->key)) {
-        parentNode->left = node->left;
-      }
-      
-      node->left->parent = parentNode;
-    }
+    node->pair->key = aux->pair->key;
+    node->pair->value = aux->pair->value;
+    removeNode(tree, aux);
     
-    free(node);
-  } else {
-    TreeNode * min = minimum(node->right);
-    node->pair->key = min->pair->key;
-    node->pair->value = min->pair->value;
+    return;
+  } else { // 1 hijo
+    TreeNode * parent = node->parent;
+    TreeNode * child = node->right;
     
-    removeNode(tree, min);
+    if(!child) child = node->left;
+    child->parent = parent;
+    if(!parent) tree->root = child;
+    else if(parent->left == node) parent->left = child;
+    else if(parent->right == node) parent->right = child;
   }
+  
+  free(node->pair);
+  free(node); 
+  
+  return;
 }
 
 void eraseTreeMap(TreeMap * tree, void* key){
   if(!tree || !tree->root) return;
-
   if(!searchTreeMap(tree, key)) return;
-  TreeNode* node = tree->current;
+  
+  TreeNode * node = tree->current;
   removeNode(tree, node);
-
 }
 
-TreePair * searchTreeMap(TreeMap * tree, void* key) {
+
+
+
+TreePair * searchTreeMap(TreeMap * tree, void * key) {
   if(!tree || !tree->root) return NULL;
-  
-  tree->current = tree->root;
-  while(tree->current) {
-      if (is_equal_tree(tree, tree->current->pair->key, key)) return tree->current->pair;
     
-      if(tree->lower_than(tree->current->pair->key, key)) tree->current = tree->current->right;
-      else tree->current = tree->current->left;
+  TreeNode * aux = tree->root;
+    
+  while(aux) {
+    if(tree->lower_than(key, aux->pair->key)) aux = aux->left;
+    else if(tree->lower_than(aux->pair->key, key)) aux = aux->right;
+    else break;
   }
-  
-  return NULL;
+    
+  tree->current = aux;
+    
+  if(!aux) return NULL;
+    
+  return (void *) aux->pair;
 }
 
-TreePair * upperBound(TreeMap * tree, void* key) {
+
+TreePair * upperBound(TreeMap * tree, void * key) {
+  if (!tree || !tree->root) return NULL;
+    
+  TreeNode * aux = tree->root;
   TreeNode * ub_node = NULL;
-  tree->current = tree->root;
+    
+  while(aux) {
+    if((!ub_node || tree->lower_than(aux->pair->key, ub_node->pair->key)) && !tree->lower_than(aux->pair->key, key))
+      ub_node = aux;
 
-  while(tree->current) {
-    if(tree->lower_than(tree->current->pair->key, key)) {
-      if(!tree->current->right) break;
-      tree->current = tree->current->right;
-    } else {
-      if(!tree->current->left) break;
-      tree->current = tree->current->left;
-      ub_node = tree->current->parent;
-    }
+    if(tree->lower_than(key, aux->pair->key)) aux = aux->left;
+    else if(tree->lower_than(aux->pair->key, key)) aux = aux->right;
+    else break;
   }
-
-  if(tree->lower_than(tree->current->pair->key, key) && ub_node) return ub_node->pair;
+    
+  tree->current = ub_node;
   if(!ub_node) return NULL;
-
-  return tree->current->pair;
+  return ub_node->pair;
 }
 
 TreePair * firstTreeMap(TreeMap * tree) {
-  if(!tree) return NULL;
-
-  TreeNode * firstNode = minimum(tree->root);
-  return firstNode->pair;
+  if (!tree || !tree->root) return NULL;
+    
+  TreeNode * aux = tree->root;
+  tree->current = minimum(aux);
+  if(!tree->current) return NULL;
+  
+  return tree->current->pair;
 }
 
 TreePair * nextTreeMap(TreeMap * tree) {
-  if (!tree) return NULL;
-  
-  TreeNode *aux = tree->current;
-  TreeNode *parentNode = aux->parent;
+  if(!tree || !tree->root || !tree->current) return NULL;
     
-  if(aux->right) tree->current = minimum(aux->right);
-  else {
+  if(tree->current->right) {
+    TreeNode * aux = tree->current->right;
+    tree->current = minimum(aux);
     
-    while(parentNode) {
-      if(tree->lower_than(parentNode->pair->key, aux->pair->key)) parentNode = parentNode->parent;
-      else break;
-    }
-    
-    if(!parentNode) return NULL;
-    tree->current = parentNode;
+    return tree->current->pair;
   }
-  
-  return tree->current->pair;
+    
+  TreeNode * aux = tree->current->parent;
+    
+  while(aux && tree->current == aux->right) {
+    tree->current = aux;
+    aux = aux->parent;
+  }
+    
+  tree->current = aux;
+  if(!aux) return NULL;
+    
+  return aux->pair;
 }

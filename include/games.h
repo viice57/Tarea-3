@@ -3,6 +3,8 @@
 
 typedef struct game game;
 
+void insertListOnTree(TreeMap * map, game * gameFromHash, char * key);
+
 game * createGame(char readLine[]);
 
 int importGames(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
