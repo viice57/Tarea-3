@@ -36,8 +36,8 @@ long hash(char * key, long capacity) {
 }
 
 int is_equal_hash(void* key1, void* key2){
-  if(!key1|| !key2) return 0;
-  if(strcmp((char*)key1,(char*)key2) == 0) return 1;
+  if(!key1 || !key2) return 0;
+  if(strcmp((char*) key1, (char*) key2) == 0) return 1;
   
   return 0;
 }

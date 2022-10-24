@@ -79,7 +79,7 @@ void insertTreeMap(TreeMap * tree, void* key, void * value) {
 }
 
 void removeNode(TreeMap * tree, TreeNode* node) {
-  //nodo hoja
+  //nodo hoja, 0 hijos
   if(!node->right && !node->left) {
     TreeNode * parent = node->parent;
     if(!parent) tree->root = NULL;
@@ -173,6 +173,7 @@ TreePair * nextTreeMap(TreeMap * tree) {
   if(tree->current->right) {
     TreeNode * aux = tree->current->right;
     tree->current = minimum(aux);
+    printf(minimum(aux));
     
     return tree->current->pair;
   }

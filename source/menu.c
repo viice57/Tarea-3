@@ -39,7 +39,6 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
 
       if(msg) {
         printf(RED "\nEl archivo no fue encontrado o ya se había importado. " RESET);
-        //exit(EXIT_FAILURE);
       } else {
         printf(GREEN "\n***********************\n");
         printf("* ¡Archivo importado! *\n");
@@ -128,7 +127,6 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
 
       if(msg) {
         printf(RED "\nArchivo no encontrado. " RESET);
-        //exit(EXIT_FAILURE);
       } else {
         printf(GREEN "\n***********************\n");
         printf("* ¡Archivo exportado! *\n");
