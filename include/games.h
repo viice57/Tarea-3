@@ -17,6 +17,8 @@ int showByRating(TreeMap* mapRatings);
 
 int showByDate(TreeMap * mapDates);
 
+int searchGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates);
+
 int addFavourite(HashMap * mapGames);
 
 int showFavourites(HashMap * mapGames);

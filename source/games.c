@@ -129,9 +129,9 @@ int addGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeM
 
   /* Asignación a mapas */
   insertMap(mapGames, newGame->name, newGame);
-  insertListOnTree(mapPrices, newGame, newGame->price);
-  insertListOnTree(mapRatings, newGame, newGame->rating);
   insertListOnTree(mapDates, newGame, newGame->date);
+  insertListOnTree(mapRatings, newGame, newGame->rating);
+  insertListOnTree(mapPrices, newGame, newGame->price);
 
   /* Mensaje de éxito */
   return 0;
@@ -154,7 +154,7 @@ int showByPrice(TreeMap * mapPrices) {
     case "decreciente":
       break;
     default:
-      printf("Tipo de bùsqueda invàlida.");
+      printf("Tipo de búsqueda inválida.");
       //return 1;
       break;
   } */
@@ -162,6 +162,7 @@ int showByPrice(TreeMap * mapPrices) {
   /* Si no existe algún juego, muestra mensaje y termina el programa. */
   if(!firstTreeMap(mapPrices)) return 1;
 
+  /* Recorremos el mapa de precios y sus nodos, con su respectiva lista de juegos */
   for(TreePair * newSearch = firstTreeMap(mapPrices); newSearch != NULL; newSearch = nextTreeMap(mapPrices)) {
     for(game * juego = (game *) firstList((List *) newSearch->value); juego != NULL; juego = (game *) nextList((List *) newSearch->value)) {
       printf("\n");
@@ -245,6 +246,86 @@ int showByDate(TreeMap * mapDates) {
   return 0;
 }
 
+int searchGame(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates) {
+  unsigned short whatToDo;
+  char name[40];
+  char newDate[5];
+  char newRating[3];
+  char newPrice[8];
+  char temp;
+  fflush(stdin);
+
+  /* Pedimos el nombre del juego a buscar */
+  printf("\nIngrese nombre del juego a buscar: ");
+  scanf("%c", &temp);
+  fgets(name, sizeof(name), stdin);
+  name[strcspn(name, "\n")] = 0;
+
+  HashPair * newSearch = searchMap(mapGames, name);
+  game * currentGame = (game *) newSearch->value;
+
+  /* Buscamos si el juego existe. Si no, error */
+  if(!newSearch) return 1;
+
+  /* Recorriendo el mapa de juegos */
+  printf("\n");
+  printf("Año: %s\n", currentGame->date);
+  printf("Valoración: %s\n", currentGame->rating);
+  printf("Precio: $ %s\n", currentGame->price);
+  printf("\n¿Desea modificar (1) o eliminar algún juego? (2): ");
+    
+  scanf("%d", &whatToDo);
+  getchar();
+  
+  switch(whatToDo) {
+    case 1:
+      printf("\nHa seleccionado modificar datos. Para dejarlos en su estado actual, déjelos en blanco.\n");
+      
+      printf("Ingrese año del juego: ");
+      scanf("%5s", newDate);
+      getchar();
+
+      printf("Ingrese valoración del juego: ");
+      scanf("%3s", newRating);
+      getchar();
+
+      printf("Ingrese precio del juego: ");
+      scanf("%8s", newPrice);
+      getchar();
+
+      TreePair * newTreeSearch = searchTreeMap(mapDates, currentGame->date);
+      for(game * juego = (game *) firstList((List *) newTreeSearch->value); juego != NULL; juego = (game *) nextList((List *) newTreeSearch->value)) {
+        if(is_equal_tree(mapDates, juego->name, name)) strncpy(juego->date, newDate, sizeof(newDate));
+      }
+
+      newTreeSearch = searchTreeMap(mapRatings, currentGame->rating);
+      for(game * juego = (game *) firstList((List *) newTreeSearch->value); juego != NULL; juego = (game *) nextList((List *) newTreeSearch->value)) {
+        if(is_equal_tree(mapRatings, juego->name, name)) strncpy(juego->rating, newRating, sizeof(newRating));
+      }
+
+      newTreeSearch = searchTreeMap(mapPrices, currentGame->price);
+      for(game * juego = (game *) firstList((List *) newTreeSearch->value); juego != NULL; juego = (game *) nextList((List *) newTreeSearch->value)) {
+        if(is_equal_tree(mapPrices, juego->name, name)) strncpy(juego->price, newPrice, sizeof(newPrice));
+      }
+      
+      strncpy(currentGame->date, newDate, sizeof(newDate));
+      strncpy(currentGame->rating, newRating, sizeof(newRating));
+      strncpy(currentGame->price, newPrice, sizeof(newPrice));
+      break;
+    case 2:
+      printf("\nHa seleccionado eliminar el juego. Eliminando...\n");
+      eraseMap(mapGames, name);
+      break;
+    default:
+      printf("\nOpción inválida.");
+      return 1;
+      break;
+  }
+
+  /* Mensaje de éxito */
+  return 0;
+}
+
 /* Función para añadir un favorito al mapa de juegos */
 int addFavourite(HashMap * mapGames) {
   char name[40];
@@ -268,7 +349,7 @@ int addFavourite(HashMap * mapGames) {
     }
   }
 
-  /* Mensaje de éxito o error */
+  /* Mensaje de éxito */
   return 0;
 }
 
@@ -284,6 +365,7 @@ int showFavourites(HashMap * mapGames) {
     }
   }
 
+  /* Mensaje de error o éxito */
   if(totalFavs == 0) return 1;
   else return 0;
 }
@@ -317,7 +399,7 @@ int exportAll(HashMap * mapGames) {
     fprintf(file, "%s\n", ((game *) Game->value)->price);
   }
   
-  /* Cerramos el archivo  y mensaje de éxito */
+  /* Cerramos el archivo y muestra mensaje de éxito */
   fclose(file);
   return 0;
 }

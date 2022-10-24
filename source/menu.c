@@ -16,7 +16,7 @@ void showMenu() {
   printf("(3) Mostrar juegos por precio\n");
   printf("(4) Mostrar juegos por valoración\n");
   printf("(5) Mostrar juegos por año\n");
-  printf("(6) Borrar juego\n");
+  printf("(6) Buscar juego\n");
   printf("(7) Agregar juego a favoritos\n");
   printf("(8) Mostrar mis favoritos\n");
   printf("(9) Exportar datos\n");
@@ -91,15 +91,14 @@ void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, T
       }
       break;
   	case 6:
-  		//msg = deleteGame(mapGames, mapPrices, mapRatings, mapDates);
-      msg = 1;
+  		msg = searchGame(mapGames, mapPrices, mapRatings, mapDates);
 
       if(msg) {
-        printf(RED "\nNo se ha encontrado algún juego con ese nombre." RESET);
+        printf(RED "\nNo se ha encontrado algún juego con ese nombre o la opción es inválida." RESET);
       } else {
-        printf(GREEN "\n****************************\n");
-        printf("* ¡Se ha borrado el juego! *\n");
-        printf("****************************\n" RESET);  
+        printf(GREEN "\n********************************\n");
+        printf("* ¡Se ha modificado con éxito! *\n");
+        printf("********************************\n" RESET);  
       }
   		break;
   	case 7:

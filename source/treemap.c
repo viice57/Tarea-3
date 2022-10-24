@@ -31,7 +31,6 @@ TreeNode * minimum(TreeNode * x){
   return x;
 }
 
-
 TreeNode * createTreeNode(void * key, void * value) {
   TreeNode * new = (TreeNode *) malloc(sizeof(TreeNode));
   if(!new) return NULL;
@@ -83,12 +82,12 @@ void removeNode(TreeMap * tree, TreeNode* node) {
   //nodo hoja
   if(!node->right && !node->left) {
     TreeNode * parent = node->parent;
-    if(!parent == NULL) tree->root = NULL;
+    if(!parent) tree->root = NULL;
     else if(parent->left == node) parent->left = NULL;
     else if(parent->right == node) parent->right = NULL;
   } else if(node->right && node->left) { //2 hijos
     TreeNode * aux = node->right;
-    aux  = minimum(aux);
+    aux = minimum(aux);
     
     node->pair->key = aux->pair->key;
     node->pair->value = aux->pair->value;
@@ -120,9 +119,6 @@ void eraseTreeMap(TreeMap * tree, void* key){
   removeNode(tree, node);
 }
 
-
-
-
 TreePair * searchTreeMap(TreeMap * tree, void * key) {
   if(!tree || !tree->root) return NULL;
     
@@ -140,7 +136,6 @@ TreePair * searchTreeMap(TreeMap * tree, void * key) {
     
   return (void *) aux->pair;
 }
-
 
 TreePair * upperBound(TreeMap * tree, void * key) {
   if (!tree || !tree->root) return NULL;
