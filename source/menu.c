@@ -28,6 +28,8 @@ void showMenu() {
 void showChoice(HashMap * mapGames, TreeMap * mapPrices, TreeMap * mapRatings, TreeMap * mapDates, short choice) {
   int msg;
 
+  /* Si el msg = 1, entonces es ocurrió un error */
+  /* Si el msg = 0, entonces se ejecutó correctamente */
   switch(choice) {
     case 0:
       printf(GREEN "\n*********************\n");
