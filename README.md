@@ -22,7 +22,7 @@
 #### La función de mostrar por precio no ordena los juegos de menor a mayor, o viceversa. Por otra parte, en la función de buscar juegos no se pudo terminar la modificación y eliminación dentro de los árboles.
 ## ③-. Aspectos positivos y a mejorar por cada uno de los integrantes (coevaluación)
 * ####  *Vicente Morales:* /
-  * ###### + Recomienda ideas que ayudan al trabajo, buen manejo de información, constancia
+  * ###### + Recomienda ideas que ayudan al trabajo, buen manejo de información, constancia.
   * ###### - 
 * ####  *Felipe Bravo:*
   * ###### + Manifiesta ideas que ayudan y posibles errores 
@@ -37,7 +37,6 @@
 * *Vicente Morales:* +1
 * *Felipe Bravo:* 0
 * *Cristofer Contreras:* -1
-git 
 
 
 
